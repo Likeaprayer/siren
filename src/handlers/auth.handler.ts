@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import User from "../db/models/user"
+import {User} from "../db/models/user"
 import { decryptPassword, encryptPassword } from "../utils/password";
 import { createToken } from "../utils/token";
 
@@ -16,8 +16,8 @@ export const signup = async(req: Request, res: Response):Promise<any> => {
    const user = await User.query().insertAndFetch({
      email: signupReq.email,
      password: hashedPassword,
-     role: signupReq.role,
-     full_name: signupReq.full_name,
+     user_type: signupReq.user_type,
+     name: signupReq.full_name,
    })
   return res.status(200).json({ message: "sucess", data: user }); 
 }
@@ -33,5 +33,5 @@ export const login = async(req: Request, res: Response): Promise<any> => {
 
     const token = createToken(user)
 
-  return res.json({ message: "login",  data: user, token}); 
+  return res.status(200).json({ message: "login",  data: user, token}); 
 }

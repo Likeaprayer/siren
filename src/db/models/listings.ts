@@ -47,6 +47,9 @@ class EventType extends mixins(Model) {
     public event_type: string;
     public created_at: Date | string;
     public updated_at: Date | string;
+
+
+    public artist: Artist
   
     // Relation mappings
     static relationMappings: RelationMappings | RelationMappingsThunk = () => ({
