@@ -215,7 +215,7 @@ export const createListingIntent = async (req: Request, res: Response): Promise<
   export const updateListingStatus = async (req: Request, res: Response): Promise<any> => {
     try {
       const id = req.params.id;
-      const userId = res.locals.user.id; // From auth middleware
+      const userId = req.user.id; // From auth middleware
       const { status } = req.body;
       
       // Get the listing and verify permissions

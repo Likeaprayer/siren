@@ -12,7 +12,7 @@ const config: { [key: string]: Knex.Config } = {
   development: {
     client: 'pg',
     connection: {
-      port: 5432,
+      port: Number(process.env.DB_PORT),
       host: process.env.DB_HOST,
       database: process.env.DB_NAME,
       user: process.env.DB_USER,
@@ -33,7 +33,7 @@ const config: { [key: string]: Knex.Config } = {
 
   production: {
     client: 'pg',
-    connection: "",
+    connection: process.env.DB_PROD_URI,
     pool: {
       min: 0,
       max: 10,
