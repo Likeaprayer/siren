@@ -21,6 +21,7 @@ Built with Node.js, Express, TypeScript, Knex.js, and Objection.js, this API pro
 - **PostgreSQL**: Database (supports JSON fields)
 
 ## Database Schema
+![Untitled (2)](https://github.com/user-attachments/assets/685a22c3-f1ca-44b8-8287-9ae758368719)
 
 The database consists of the following core tables:
 
