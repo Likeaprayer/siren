@@ -17,7 +17,7 @@ export const signup = async(req: Request, res: Response):Promise<any> => {
      email: signupReq.email,
      password: hashedPassword,
      user_type: signupReq.user_type,
-     name: signupReq.full_name,
+     name: signupReq.name,
    })
   return res.status(200).json({ message: "sucess", data: user }); 
 }

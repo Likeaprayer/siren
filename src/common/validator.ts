@@ -7,8 +7,8 @@ export const Validator = {
       body: {
         email: Joi.string().email().required(),
         password: Joi.string().required(),
-        role: Joi.string().valid("INDIVIDUAL", "COACH", "FACILITY").required(),
-        full_name: Joi.string().required(),
+        user_type: Joi.string().required(),
+        name: Joi.string().required(),
       },
     }),
   login: () =>
@@ -30,8 +30,8 @@ export const Validator = {
       body: {
         email: Joi.string().email().required(),
         password: Joi.string().required(),
-        role: Joi.string().valid("INDIVIDUAL", "COACH", "FACILITY").required(),
-        full_name: Joi.string().required(),
+        user_type: Joi.string().required(),
+        name: Joi.string().required(),
       },
     }),
   updateUserById: () =>
@@ -40,4 +40,24 @@ export const Validator = {
         id: Joi.string().required(),
       },
     }),
+
+  //listing
+  createListingIntent: () => validationMiddleware({}),
+  getListingIntentById: () => validationMiddleware({}),
+  respondToListingIntent: () => validationMiddleware({}),
+  createListingFromIntent: () => validationMiddleware({}),
+  getListingById: () => validationMiddleware({}),
+  updateListingStatus: () => validationMiddleware({}),
+
+  //artist
+  getArtistById: () => validationMiddleware({}),
+  createArtistProfile: () => validationMiddleware({}),
+  updateArtistProfile: () => validationMiddleware({}),
+  searchArtists: () => validationMiddleware({}),
+
+  //payments
+  createPaymentIntent: () => validationMiddleware({}),
+  processPayment: () => validationMiddleware({}),
+  getPaymentDetails: () => validationMiddleware({}),
+
 };

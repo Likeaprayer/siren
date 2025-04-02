@@ -50,6 +50,7 @@ class EventType extends mixins(Model) {
 
 
     public artist: Artist
+    public lister: User
   
     // Relation mappings
     static relationMappings: RelationMappings | RelationMappingsThunk = () => ({

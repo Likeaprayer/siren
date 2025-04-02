@@ -16,7 +16,6 @@ export async function up(knex: Knex): Promise<void> {
     table.string('email').notNullable().unique().index();
     table.string('password').notNullable();
     table.uuid('user_type').references('id').inTable('user_type').onDelete('CASCADE');
-    table.timestamp('created_At');
     
     table.timestamps(true, true);
   });

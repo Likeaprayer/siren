@@ -5,7 +5,7 @@ import { ListingIntent, Listing } from "../db/models/listings";
 
 export const createListingIntent = async (req: Request, res: Response): Promise<any> => {
     try {
-      const userId = res.locals.user.id; // From auth middleware
+      const userId = req.user.id; // From auth middleware
       const { 
         artist_id, 
         start_date, 
@@ -60,7 +60,7 @@ export const createListingIntent = async (req: Request, res: Response): Promise<
   export const respondToListingIntent = async (req: Request, res: Response): Promise<any> => {
     try {
       const id = req.params.id;
-      const userId = res.locals.user.id; 
+      const userId = req.user.id; 
       const { status, counter_bid } = req.body;
       
       // Get the listing intent and verify permissions
@@ -72,33 +72,75 @@ export const createListingIntent = async (req: Request, res: Response): Promise<
         return res.status(404).json({ message: "Listing intent not found" });
       }
       
-      // Check if the user is the artist (or associated with the artist)
+     
       const artistUserId = listingIntent.artist?.user_id;
-      if (artistUserId !== userId) {
+      if (artistUserId !== userId && listingIntent.lister_id != userId) {
         return res.status(403).json({ message: "Not authorized to respond to this listing intent" });
       }
       
       // Update the listing intent based on response
       const updateData: any = { status };
       if (status === IntentStatus.COUNTERED && counter_bid) {
-        updateData.counter_bid = counter_bid;
-      }
+        if (artistUserId == userId) {
+            updateData.counter_bid = counter_bid;
+        }else {
+            updateData.bid = counter_bid;
+        }
+        
+      } 
       
       const updatedIntent = await ListingIntent.query().patchAndFetchById(id, updateData);
       
-      res.json({ message: "Response recorded successfully", data: updatedIntent });
+      return res.status(200).json({ message: "Response recorded successfully", data: updatedIntent });
     } catch (error) {
       console.error('Error responding to listing intent:', error);
       res.status(500).json({ message: "Internal server error" });
     }
   };
+
+  export const rebidListingIntent = async (req: Request, res: Response): Promise<any> => {
+    try {
+      const id = req.params.id;
+      const userId = req.user.id; 
+      const { counter_bid } = req.body;
+      
+      // Get the listing intent and verify permissions
+      const listingIntent = await ListingIntent.query()
+        .findById(id)
+        .withGraphFetched('lister.[user]');
+      
+      if (!listingIntent) {
+        return res.status(404).json({ message: "Listing intent not found" });
+      }
+      
+     
+      const listerUserId = listingIntent.lister?.id;
+      if (listerUserId !== userId ) {
+        return res.status(403).json({ message: "Not authorized to respond to this listing intent" });
+      }
+      
+      // Update the listing intent based on response
+      const updateData: any = {  };
+      if (counter_bid) {
+            updateData.bid = counter_bid;
+            updateData.status = IntentStatus.COUNTERED
+      } 
+      
+      const updatedIntent = await ListingIntent.query().patchAndFetchById(id, updateData);
+      
+      return res.status(200).json({ message: "Response recorded successfully", data: updatedIntent });
+    } catch (error) {
+      console.error('Error responding to listing intent:', error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  };
+
   
-  // ============ LISTING HANDLERS ============
   
   export const createListingFromIntent = async (req: Request, res: Response): Promise<any> => {
     try {
       const intentId = req.params.intentId;
-      const userId = res.locals.user.id; // From auth middleware
+      const userId = req.user.id; // From auth middleware
       
       // Start a transaction
       const result = await transaction(ListingIntent.knex(), async (trx) => {

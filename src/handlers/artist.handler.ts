@@ -22,7 +22,9 @@ export const getArtistById = async (req: Request, res: Response): Promise<any> =
   
   export const createArtistProfile = async (req: Request, res: Response): Promise<any> => {
     try {
-      const userId = res.locals.user.id; // Assuming user ID is available from authentication middleware
+      // console.log("user_id", req?.user)
+      const userId = req.user.id; 
+      
       const { stagename, gender, contact_email, contact_phone, location } = req.body;
       
       // Check if artist profile already exists for this user
@@ -49,18 +51,14 @@ export const getArtistById = async (req: Request, res: Response): Promise<any> =
   
   export const updateArtistProfile = async (req: Request, res: Response): Promise<any> => {
     try {
-      const id = req.params.id;
-      const userId = res.locals.user.id; // Assuming user ID is available from authentication middleware
+
+      const id = req.user.id; 
       const { stagename, gender, contact_email, contact_phone, location } = req.body;
       
       // Ensure artist belongs to the authenticated user
       const artist = await Artist.query().findById(id);
       if (!artist) {
         return res.status(404).json({ message: "Artist profile not found" });
-      }
-      
-      if (artist.user_id !== userId) {
-        return res.status(403).json({ message: "Not authorized to update this artist profile" });
       }
       
       const updatedArtist = await Artist.query().patchAndFetchById(id, {
@@ -71,7 +69,7 @@ export const getArtistById = async (req: Request, res: Response): Promise<any> =
         location
       });
       
-      res.json({ message: "Artist profile updated successfully", data: updatedArtist });
+      res.status(200).json({ message: "Artist profile updated successfully", data: updatedArtist });
     } catch (error) {
       console.error('Error updating artist profile:', error);
       res.status(500).json({ message: "Internal server error" });
